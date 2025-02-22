@@ -1,26 +1,35 @@
 const axios = require('axios');
 const Transaction = require('../models/transactionModel');
-require('dotenv').config(); // Load environment variables from .env file
+require('dotenv').config();
 
-const SEED_API_URL = process.env.THIRD_PARTY_API_URL; // Use the environment variable
-
-const BATCH_SIZE = 100; // Define the batch size
+const SEED_API_URL = process.env.THIRD_PARTY_API_URL;
+const BATCH_SIZE = 100;
 
 const seedDatabase = async () => {
     try {
-        // Clear the transactions collection
-        await Transaction.deleteMany({});
+        // Check if the collection already has data
+        const existingCount = await Transaction.countDocuments();
+        if (existingCount > 0) {
+            console.log('Database already contains transactions. Skipping seeding.');
+            return;
+        }
 
+        // Fetch transaction data
         const response = await axios.get(SEED_API_URL);
         const transactions = response.data;
 
-        // Insert documents in batches
-        for (let i = 0; i < transactions.length; i += BATCH_SIZE) {
-            const batch = transactions.slice(i, i + BATCH_SIZE);
-            await Transaction.insertMany(batch, { timeout: 60000 }); // Increase timeout to 60 seconds
+        if (!transactions || transactions.length === 0) {
+            console.log('No transactions found in API response.');
+            return;
         }
 
-        console.log('Database seeded successfully with transaction data.');
+        // Insert in batches
+        for (let i = 0; i < transactions.length; i += BATCH_SIZE) {
+            const batch = transactions.slice(i, i + BATCH_SIZE);
+            await Transaction.insertMany(batch, { timeout: 60000 });
+        }
+
+        console.log('Database seeded successfully.');
     } catch (error) {
         console.error('Error seeding database:', error);
     }

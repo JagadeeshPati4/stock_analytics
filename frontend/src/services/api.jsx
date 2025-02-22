@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:5000/api'; // Adjust the base URL as needed
+const API_BASE_URL = 'https://stock-analytatic-backend.onrender.com/api'; // Adjust the base URL as needed
 
 
 export const fetchTransactions = async (month, page = 1, perPage = 10) => {

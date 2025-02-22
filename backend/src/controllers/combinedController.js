@@ -1,4 +1,7 @@
 const axios = require("axios");
+require('dotenv').config(); // Load environment variables from .env file
+
+const Back_end_URL = process.env.Back_end_URL; // Use the environment variable
 
 const monthMap = {
     january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
@@ -21,10 +24,10 @@ const getCombinedData = async (req, res) => {
 
         // Define API endpoints
         const endpoints = {
-            transactions: `http://localhost:5000/api/transactions?month=${month}`,
-            statistics: `http://localhost:5000/api/statistics?month=${month}`,
-            barChart: `http://localhost:5000/api/bar-chart?month=${month}`,
-            pieChart: `http://localhost:5000/api/pie-chart?month=${month}`
+            transactions: `${Back_end_URL}/api/transactions?month=${month}`,
+            statistics: `${Back_end_URL}/api/statistics?month=${month}`,
+            barChart: `${Back_end_URL}/api/bar-chart?month=${month}`,
+            pieChart: `${Back_end_URL}/api/pie-chart?month=${month}`
         };
 
         // Fetch all data in parallel with improved error handling
